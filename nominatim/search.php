@@ -1042,9 +1042,9 @@
 					$sSQL .= "group by place_id";
 					if (!$bDeDupe) $sSQL .= ",place_id";
 					$sSQL .= ",get_address_by_language(place_id, $sLanguagePrefArraySQL) ";
-//					  $sSQL .= "order by importance desc";
+					  $sSQL .= "order by importance desc";
 //					$sSQL .= "order by rank_search,rank_address,porder asc";
-					$sSQL .= "order by rank_search,rank_address asc";
+//					$sSQL .= "order by rank_search,rank_address asc";
 					if (CONST_Debug) var_dump('<hr>',$sSQL);
 					$aSearchResults = $oDB->getAll($sSQL);
 //var_dump($sSQL,$aSearchResults);exit;
@@ -1111,8 +1111,8 @@
 					$sSQL .= "group by place_id";
 					if (!$bDeDupe) $sSQL .= ",place_id";
 					$sSQL .= ",get_address_by_language(place_id, $sLanguagePrefArraySQL) ";
-//					$sSQL .= "order by importance desc";
-					$sSQL .= "order by rank_search,rank_address,porder asc";
+					$sSQL .= "order by importance desc";
+//					$sSQL .= "order by rank_search,rank_address,porder asc";
 					if (CONST_Debug) var_dump('<hr>',$sSQL);
 					$aSearchResults = $oDB->getAll($sSQL);
 //var_dump($sSQL,$aSearchResults);exit;
@@ -1318,6 +1318,17 @@ if($aResult['type'] == "house") {
   $pretty_name = $aResult['address']['road']." ".$aResult['address']['house_number'].", ".$city.", ".$country;
 }
 
+
+
+// country
+else if($aResult['type'] == "country") {
+  if($aResult['address']['country_code'] == 'us') {
+    $pretty_name = "USA";
+  } else {
+    $pretty_name = $country;
+  }
+}
+
 // state
 else if($aResult['type'] == "state") {
   if($aResult['address']['country_code'] == 'us') {
@@ -1371,7 +1382,18 @@ else if($aResult['type'] == "administrative") {
     $pretty_name = $aResult['address']['county'].", ".$country;
   }
   else if(isset($aResult['address']['state'])) {
-    $pretty_name = $aResult['address']['state'].", ".$country;
+    if($aResult['address']['country_code'] == 'us') {
+      $pretty_name = $country;
+    } else {
+      $pretty_name = $aResult['address']['state'].", ".$country;
+    }
+  }
+  else if(isset($aResult['address']['country'])) {
+    if($aResult['address']['country_code'] == 'us') {
+      $pretty_name = "USA";
+    } else {
+      $pretty_name = $country;
+    }
   }
 }
 
